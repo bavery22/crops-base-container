@@ -46,7 +46,7 @@ class TestContainersBuilt(unittest.TestCase):
         print("dockerhubRepo=%s"%(self.dockerhubRepo))
         self.baseD={}
         self.baseD['i686']={}
-        self.baseD['i686']['name']="%s/toolchain:%s"%(self.dockerhubRepo,"deps")
+        self.baseD['i686']['name']="%s/toolchain-base:%s"%(self.dockerhubRepo,"latest")
         self.baseD['i686']['found']=False
 
     def tearDown(self):
@@ -57,7 +57,7 @@ class TestContainersBuilt(unittest.TestCase):
         cmd = """docker  images """
         p=subprocess.Popen(cmd.split(), stderr=sys.stderr, stdout=subprocess.PIPE,
                         shell=False)
-        check=self.depsD
+        check=self.baseD
         allBuilt=checkPresent(check,p.stdout)
         if not allBuilt:
             # error information is more useful than true is not false

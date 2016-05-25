@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+set -x
 set -o pipefail
 
 
@@ -7,7 +8,7 @@ set -o pipefail
 #
 # Example:
 #
-# ./scripts/build_containers.deps
+# ./scripts/build_containers.base
 
 
 if [ "$DOCKERHUB_REPO" = "" ]; then
@@ -17,16 +18,16 @@ echo "TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG"
 TOPDIR=`git rev-parse --show-toplevel`
 
 # remove the deps image as we will rebuild it
-Q=`docker images  -q ${DOCKERHUB_REPO}/toolchain:deps`
+Q=`docker images  -q ${DOCKERHUB_REPO}/toolchain-base`
 if [ "$Q"  != "" ]; then
-    echo "Removing deps image"
+    echo "Removing toolchain-base image"
     docker rmi -f $Q
 fi
 
 cd ${TOPDIR}/dockerfiles;
 
-Q=`docker images  -q toolchain:deps`
+Q=`docker images  -q toolchain-base`
 if [ "$Q"  == "" ]; then
     echo "Build toolchain deps image"
-    docker build -t toolchain:deps -f Dockerfile.toolchain.deps  ..
+    docker build -t ${DOCKERHUB_REPO}/toolchain-base -f Dockerfile.toolchain-base  ..
 fi
