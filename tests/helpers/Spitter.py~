@@ -1,0 +1,38 @@
+''' Run Cmd while keeping stdout active'''
+
+
+import subprocess
+import os.path
+import glob
+import argparse
+
+import threading
+import time
+class SpitMsg(threading.Thread):
+    def __init__(self,cmd,msg="Keep Travis Happy",timeout=60):
+        threading.Thread.__init__(self)
+        self.msg=msg
+        self.timeout=timeout
+        self.keepGoing=True
+    def run(self):
+        try:
+            subprocess.call(self.cmd.split())
+        except subprocess.CalledProcessError as e:
+            print e.output
+            self.assertTrue(False)
+            return
+
+        while self.keepGoing:
+            print(self.msg);
+            time.sleep(self.timeout)
+    def setKeepGoing(self,flag):
+        self.keepGoing=flag
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--command", "-c", help="command to run"
+                        "while chatty runs in background")
+    args = parser.parse_args()
+    mySpitter=SpitMsg("ls -alt")
+    mySpitter.start()
